@@ -12,11 +12,15 @@ class MovieListViewController: UIViewController {
     @IBOutlet weak var tableView:UITableView!
     @IBOutlet weak var buttonSearch:UIButton!
     
+    var currentPage:Int = 1
+    var isLoadMore:Bool = false
+    
     //VIPER
     var presenter:MoviePresenter?
     
     var arrayOfMovies:[MovieResults] = []
-    
+    let refreshControl = UIRefreshControl()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -34,12 +38,32 @@ class MovieListViewController: UIViewController {
         self.tableView.separatorStyle = .none
         self.tableView.showsVerticalScrollIndicator = false
         self.tableView.register(UINib(nibName: MovieListTableViewCell.xibName, bundle: nil), forCellReuseIdentifier: MovieListTableViewCell.cellIdentifier)
+        self.tableView.estimatedRowHeight = 120.0
+        
+        self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        self.refreshControl.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
+        self.tableView.addSubview(refreshControl)
+    }
+    @objc func refresh(_ sender: AnyObject) {
+       // Code to refresh table view
+        if let currentinteractor = self.presenter?.interactor{
+            currentinteractor.getMoviesList(curentpage: 1)
+        }
+        self.refreshControl.endRefreshing()
+
     }
     // MARK: - Navigation
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
+    }
+    func navigateToMovieDetailViewController(movie:MovieResults){
+        let router = MovieListRouter.loadMovieDetails()
+        if let rootViewController:MovieDetailsViewController = router.entrydetail as? MovieDetailsViewController{
+            rootViewController.movie = movie
+            self.navigationController?.pushViewController(rootViewController, animated: true)
+        }
     }
     @IBAction func buttonSearchSelector(sender:UIButton){
         
@@ -48,13 +72,24 @@ class MovieListViewController: UIViewController {
 extension MovieListViewController:MovieView{
     func update(with movies: [MovieResults]) {
         DispatchQueue.main.async {
-            self.arrayOfMovies = movies
+            if movies.count > 0 {
+                self.isLoadMore = false
+            }else{
+                self.isLoadMore = true
+            }
+            if self.currentPage == 1{
+                self.arrayOfMovies = movies
+            }else{
+                self.arrayOfMovies.append(contentsOf: movies)
+            }
             self.tableView.reloadData()
         }
     }
     func update(with error: String) {
-        
+       
+        self.isLoadMore = true
     }
+    
 }
 extension MovieListViewController:UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -67,9 +102,17 @@ extension MovieListViewController:UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
+        return UITableView.automaticDimension
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        self.navigateToMovieDetailViewController(movie: self.arrayOfMovies[indexPath.row])
     }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+         if (((scrollView.contentOffset.y + scrollView.frame.size.height) > scrollView.contentSize.height ) && !self.isLoadMore){
+              self.isLoadMore = true
+              self.currentPage += 1
+              print("self.currentPage---->", self.currentPage)
+              self.presenter?.interactor?.getMoviesList(curentpage: self.currentPage)
+             }
+         }
 }

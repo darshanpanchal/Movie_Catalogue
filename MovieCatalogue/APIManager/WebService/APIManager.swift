@@ -129,18 +129,18 @@ class APIManager {
     }
     func checkForQueryParameters(type: EndPointType, params: Parameters? = nil)->(URL,Parameters?){
         if type.httpMethod == .get,let input = params{
-            if type.path != MovieAPI.GETMovieAPI.path{
-                var detailID = ""
-                for value in input{
-                    detailID = "\(value.value)"
-                }
-                let strurl = "\(type.url.absoluteString)\(detailID)"
-                if let objURL = URL.init(string: strurl){
-                    return (objURL,nil)
-                }else{
-                    return (type.url,nil)
-                }
-            }else{
+//            if type.path != MovieAPI.GETMovieAPI.path{
+//                var detailID = ""
+//                for value in input{
+//                    detailID = "\(value.value)"
+//                }
+//                let strurl = "\(type.url.absoluteString)\(detailID)"
+//                if let objURL = URL.init(string: strurl){
+//                    return (objURL,nil)
+//                }else{
+//                    return (type.url,nil)
+//                }
+//            }else{
                 let url = type.url
                 var queryItems:[URLQueryItem] = []
                 for value in input{
@@ -151,7 +151,7 @@ class APIManager {
                 }else{
                     return (type.url,params)
                 }
-            }
+//            }
         } else{
             return (type.url,params)
         }
@@ -163,16 +163,54 @@ class APIManager {
             viewControllerUtils.showLoader()
             //
             self.sessionManager.session.configuration.timeoutIntervalForRequest = 60
+            var url:URL?
+            var objparams:Parameters?
             
-            let queryparameterURlParam = self.checkForQueryParameters(type: type, params: params)
-            print("url:", queryparameterURlParam.0)
+            if type.path == MovieAPI.GETMovieDetailAPI.path || type.path == MovieAPI.GETMovieReviewAPI.path ||
+                type.path == MovieAPI.GETSimilarMovieAPI.path || type.path == MovieAPI.GETCaseCrewAPI.path{
+                if let _ = params{
+                    var inputs = params!
+                    let movie = inputs["id"]
+                    inputs.removeValue(forKey: "id")
+                    let queryparameterURlParam = self.checkForQueryParameters(type: type, params: inputs)
+                    if type.path == MovieAPI.GETMovieDetailAPI.path{
+                        let objurl = queryparameterURlParam.0.absoluteString.replacingOccurrences(of: "\(MovieAPI.GETMovieDetailAPI.path)", with: "\(movie ?? 0)")
+                        url = URL.init(string: "\(objurl)")
+                    }else if type.path == MovieAPI.GETMovieReviewAPI.path{
+                        let objurl = queryparameterURlParam.0.absoluteString.replacingOccurrences(of: "\(MovieAPI.GETMovieReviewAPI.path)", with:
+                                                                                                    "\(movie ?? 0)/reviews")
+                        url = URL.init(string: "\(objurl)")
+                    }else if type.path == MovieAPI.GETSimilarMovieAPI.path{
+                        let objurl = queryparameterURlParam.0.absoluteString.replacingOccurrences(of: "\(MovieAPI.GETSimilarMovieAPI.path)", with:
+                                                                                                    "\(movie ?? 0)/similar")
+                        url = URL.init(string: "\(objurl)")
+                    }else if type.path == MovieAPI.GETCaseCrewAPI.path{
+                        let objurl = queryparameterURlParam.0.absoluteString.replacingOccurrences(of: "\(MovieAPI.GETCaseCrewAPI.path)", with:
+                                                                                                    "\(movie ?? 0)/credits")
+                        url = URL.init(string: "\(objurl)")
+                    }
+                    objparams = queryparameterURlParam.1
+                }
+            }else{
+                let queryparameterURlParam = self.checkForQueryParameters(type: type, params: params)
+                url = queryparameterURlParam.0
+                objparams = queryparameterURlParam.1
+            }
+            
+            
+             
+            
+            print("url:", url)
             print("method:", type.httpMethod)
-            print("param:",params ?? [:])
+            print("param:",objparams ?? [:])
             
             print("Header", type.headers ?? [:])
-            self.sessionManager.request(queryparameterURlParam.0,
+            
+            
+            
+            self.sessionManager.request(url!,
                                         method: type.httpMethod,
-                                        parameters: queryparameterURlParam.1,
+                                        parameters: objparams,
                                         encoding: type.encoding,
                                         headers: type.headers).validate().responseJSON { data in
                 //

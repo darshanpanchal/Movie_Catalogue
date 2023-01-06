@@ -10,10 +10,17 @@ import Foundation
 // Protocol
 // Reference Presenter
 
-
+//-------
 protocol MovieView{
     var presenter:MoviePresenter? {get set}
     
     func update(with movies:[MovieResults])
+    func update(with error:String)
+}
+//------
+protocol MovieDetailView{
+    var presenter:MovieDetailPresenter? {get set}
+    func updatewithMovieDetails(movie:MovieDetailDataBase)
+    func updatewithMovieReview(movie:MovieReviewBase)
     func update(with error:String)
 }

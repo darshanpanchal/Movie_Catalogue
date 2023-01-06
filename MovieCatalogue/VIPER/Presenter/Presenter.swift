@@ -25,7 +25,7 @@ class MovieListPresenter:MoviePresenter{
     var router: MovieRouter?
     var interactor:MovieInteractor?{
         didSet{
-            interactor?.getMoviesList()
+            interactor?.getMoviesList(curentpage: 1)
         }
     }
     
@@ -36,6 +36,43 @@ class MovieListPresenter:MoviePresenter{
                     view?.update(with: results)
             case .failure(let _):
                 view?.update(with: "Something went wrong.")
+        }
+    }
+    
+}
+//========
+protocol MovieDetailPresenter {
+    var router:MovieRouter? {get set}
+    var interactor:MovieDetailInteractor? { get set}
+    var view:MovieDetailView? {get set}
+ 
+    func movieDetailInteractorDidFetchMovieDetails(with result:Result<MovieDetailDataBase,AlertMessage>)
+    func movieDetailInteractorDidFetchMovieReview(with result:Result<MovieReviewBase,AlertMessage>)
+}
+
+class MovieDetailsPresenter:MovieDetailPresenter{
+    
+    var view: MovieDetailView?
+    var router: MovieRouter?
+    var interactor:MovieDetailInteractor?
+       
+  
+    func movieDetailInteractorDidFetchMovieDetails(with result: Result<MovieDetailDataBase, AlertMessage>) {
+        switch result{
+            case .success(let results):
+                    view?.updatewithMovieDetails(movie: results)
+            case .failure(let _):
+                    view?.update(with: "Something went wrong.")
+
+        }
+    }
+    func movieDetailInteractorDidFetchMovieReview(with result: Result<MovieReviewBase, AlertMessage>) {
+        switch result{
+            case .success(let results):
+                    view?.updatewithMovieReview(movie: results)
+            case .failure(let _):
+                    view?.update(with: "Something went wrong.")
+
         }
     }
     
