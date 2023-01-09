@@ -42,7 +42,7 @@ class MovieListTableViewCell: UITableViewCell {
     func configureCurrentMovieDetails(movieResult:MovieResults){
         let imageURl = "\(Constant.kImageURL)\(movieResult.poster_path ?? "")"
         self.imgMovie.sd_setImage(with: URL(string: "\(imageURl)"), placeholderImage: UIImage(named: "placeholder.png"))
-        self.lblMovieDate.text = "\(movieResult.release_date ?? "")"
+        self.lblMovieDate.text = "\(movieResult.release_date ?? "")".convertDateDDMMMYYYY()
         self.lblMovieName.text = "\(movieResult.title ?? "")"
         self.lblMovieLike.text = "\(movieResult.vote_count ?? 0)"
         self.lblMovieRate.text = "\(movieResult.vote_average ?? 0.0)"

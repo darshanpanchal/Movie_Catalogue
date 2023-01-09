@@ -236,3 +236,15 @@ class ViewControllerUtilsForSaveData {
         }
     }
 }
+extension String{
+    func convertDateDDMMMYYYY()->String{
+        let dateFormatterGet = DateFormatter()
+        dateFormatterGet.dateFormat = "yyyy-MM-dd"
+        if let date = dateFormatterGet.date(from:self){
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "dd MMM,yyyy"
+            return dateFormatter.string(from: date)
+        }
+        return ""
+    }
+}

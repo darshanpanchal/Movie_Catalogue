@@ -22,5 +22,8 @@ protocol MovieDetailView{
     var presenter:MovieDetailPresenter? {get set}
     func updatewithMovieDetails(movie:MovieDetailDataBase)
     func updatewithMovieReview(movie:MovieReviewBase)
+    func updatewithSimilarMovie(movie:SimilarMovieBase)
+    func updatewithMovieCast(movie:MovieCaseCrewBase)
+    
     func update(with error:String)
 }

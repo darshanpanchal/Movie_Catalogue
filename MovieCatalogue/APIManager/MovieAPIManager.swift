@@ -83,4 +83,22 @@ class MovieAPIManager{
             }
         }
     }
+    func requestSimilarMovieAPI(input: Parameters?, handler: @escaping (_ result: SimilarMovieBase?, _ error: AlertMessage?)->()) {
+        APIManager.shared().call(type: MovieAPI.GETSimilarMovieAPI, params: input) { (result: SimilarMovieBase?, message: AlertMessage?) in
+            if let result = result {
+                handler(result, nil)
+            } else {
+                handler(nil, message!)
+            }
+        }
+    }
+    func requestMovieCastCrewAPI(input: Parameters?, handler: @escaping (_ result: MovieCaseCrewBase?, _ error: AlertMessage?)->()) {
+        APIManager.shared().call(type: MovieAPI.GETCaseCrewAPI, params: input) { (result: MovieCaseCrewBase?, message: AlertMessage?) in
+            if let result = result {
+                handler(result, nil)
+            } else {
+                handler(nil, message!)
+            }
+        }
+    }
 }

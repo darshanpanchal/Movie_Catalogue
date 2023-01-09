@@ -67,9 +67,9 @@ class MovieDetailsInteractor:MovieDetailInteractor{
     }
     func getSimilarMovieDetails(movie:MovieResults,page:Int = 1){
         let input = ["id":"\(movie.id ?? 0)","api_key":"32ea78d55ca5dd333c4e6ea14413dc5a","page":"\(page)"]
-        self.movieAPIManager.requestMovieReviewAPI(input: input) { result, error in
+        self.movieAPIManager.requestSimilarMovieAPI(input: input) { result, error in
             if let movieResult = result{
-                self.presenter?.movieDetailInteractorDidFetchMovieReview(with: .success(movieResult))
+                self.presenter?.movieDetailInteractorDidFetchSimilarMovie(with: .success(movieResult))
             }else if let  error = error {
                 self.presenter?.movieDetailInteractorDidFetchMovieReview(with: .failure(error))
             }
@@ -77,9 +77,9 @@ class MovieDetailsInteractor:MovieDetailInteractor{
     }
     func getCaseCrewMovieDetails(movie:MovieResults){
         let input = ["id":"\(movie.id ?? 0)","api_key":"32ea78d55ca5dd333c4e6ea14413dc5a"]
-        self.movieAPIManager.requestMovieReviewAPI(input: input) { result, error in
+        self.movieAPIManager.requestMovieCastCrewAPI(input: input) { result, error in
             if let movieResult = result{
-                self.presenter?.movieDetailInteractorDidFetchMovieReview(with: .success(movieResult))
+                self.presenter?.movieDetailInteractorDidFetchMovieCast(with: .success(movieResult))
             }else if let  error = error {
                 self.presenter?.movieDetailInteractorDidFetchMovieReview(with: .failure(error))
             }
