@@ -27,3 +27,10 @@ protocol MovieDetailView{
     
     func update(with error:String)
 }
+//------
+protocol MovieSearchView{
+    var presenter:MovieSearchPresenter? {get set}
+    
+    func updatewithMovieSearchDetails(movies:[MovieResults])
+    func update(with error:String)
+}

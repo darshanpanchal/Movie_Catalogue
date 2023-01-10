@@ -88,3 +88,25 @@ class MovieDetailsInteractor:MovieDetailInteractor{
     
     
 }
+//-----------
+protocol MovieSearchInteractor{
+    var presenter:MovieSearchPresenter? {get set}
+    func getMoviesSearchDetails(curentpage:Int,searchString:String)
+}
+class MovieSearchResultInteractor:MovieSearchInteractor{
+    
+    var presenter: MovieSearchPresenter?
+    let movieAPIManager:MovieAPIManager = MovieAPIManager()
+    
+    func getMoviesSearchDetails(curentpage:Int = 1,searchString: String) {
+        let input = ["api_key":"32ea78d55ca5dd333c4e6ea14413dc5a","page":"\(curentpage)","query":"\(searchString)"]
+        self.movieAPIManager.requestMovieListDetails(input: input) { result, error in
+            if let movieResult = result?.results{
+                self.presenter?.movieDetailInteractorDidFetchMovieSearchDetails(with: .success(movieResult))
+            }else if let  error = error {
+                self.presenter?.movieDetailInteractorDidFetchMovieSearchDetails(with: .failure(error))
+            }
+        }
+    }
+    
+}

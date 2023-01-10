@@ -97,3 +97,26 @@ class MovieDetailsPresenter:MovieDetailPresenter{
         }
     }
 }
+//========
+protocol MovieSearchPresenter {
+    var router:MovieRouter? {get set}
+    var interactor:MovieSearchInteractor? { get set}
+    var view:MovieSearchView? {get set}
+ 
+    func movieDetailInteractorDidFetchMovieSearchDetails(with result:Result<[MovieResults],AlertMessage>)
+}
+class MovieSearchDetailsPresenter:MovieSearchPresenter{
+    var view: MovieSearchView?
+    var router: MovieRouter?
+    var interactor:MovieSearchInteractor?
+    
+    func movieDetailInteractorDidFetchMovieSearchDetails(with result: Result<[MovieResults], AlertMessage>) {
+        switch result{
+            case .success(let results):
+                    view?.updatewithMovieSearchDetails(movies: results)
+            case .failure(let _):
+                    view?.update(with: "Something went wrong.")
+
+        }
+    }
+}

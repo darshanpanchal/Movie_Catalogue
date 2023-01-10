@@ -10,18 +10,23 @@ import UIKit
 
 typealias EntryPoint = MovieView & UIViewController
 typealias DetailEntryPoint = MovieDetailView &  UIViewController
+typealias MovieSearchEntryPoint = MovieSearchView & UIViewController
 
 protocol MovieRouter{
     static func loadMovies() -> MovieRouter
     static func loadMovieDetails() -> MovieRouter
+    static func loadMovieSearch() -> MovieRouter
     var entry:EntryPoint? {get set}
     var entrydetail:DetailEntryPoint? {get set}
-    
+    var entrySearch:MovieSearchEntryPoint? {get set}
 }
 
 class MovieListRouter:MovieRouter{
-    var entrydetail: DetailEntryPoint?
     
+    
+    var entrySearch: MovieSearchEntryPoint?
+    
+    var entrydetail: DetailEntryPoint?
     
     var entry: EntryPoint?
     
@@ -78,6 +83,33 @@ class MovieListRouter:MovieRouter{
         }
         
           
+        return objrouter
+    }
+    
+    static func loadMovieSearch() -> MovieRouter {
+        let objrouter = MovieListRouter()
+        //VIP
+        //View
+        let mainstoryBoard = UIStoryboard.init(name: "Main", bundle: nil)
+        if var movieDetailViewController:MovieSearchView = mainstoryBoard.instantiateViewController(withIdentifier: "MovieSearchViewController") as? MovieSearchView{
+            //Interactor
+            var objinteractor:MovieSearchInteractor = MovieSearchResultInteractor()
+            //Presenter
+            var objpresenter:MovieSearchPresenter = MovieSearchDetailsPresenter()
+            //View To presenter
+            movieDetailViewController.presenter = objpresenter
+            
+            //Interactor to presenter
+            objinteractor.presenter = objpresenter
+            
+            //Assign to presenter
+            objpresenter.view = movieDetailViewController
+            objpresenter.interactor = objinteractor
+            objpresenter.router = objrouter
+            
+            
+            objrouter.entrySearch = movieDetailViewController as?  MovieSearchEntryPoint
+        }
         return objrouter
     }
 }

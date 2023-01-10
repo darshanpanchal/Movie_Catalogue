@@ -65,8 +65,14 @@ class MovieListViewController: UIViewController {
             self.navigationController?.pushViewController(rootViewController, animated: true)
         }
     }
+    func navigationToMovieSearchViewContoller(){
+        let router = MovieListRouter.loadMovieSearch()
+        if let moviesearchViewConrolller:MovieSearchViewController = router.entrySearch as? MovieSearchViewController{
+            self.navigationController?.pushViewController(moviesearchViewConrolller, animated: true)
+        }
+    }
     @IBAction func buttonSearchSelector(sender:UIButton){
-        
+        self.navigationToMovieSearchViewContoller()
     }
 }
 extension MovieListViewController:MovieView{
